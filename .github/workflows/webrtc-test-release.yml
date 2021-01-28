@@ -74,6 +74,11 @@ jobs:
       - name: Install package dependencies
         working-directory: packages/js/examples/react-audio-widgets
         run: npm ci --ignore-scripts
+      - name: Start Audio-Widgets StoryBook 
+        working-directory: packages/js/examples/react-audio-widgets
+        run: npm run storybook
+        env:
+          CI: true   
       - name: Test Chrome
         working-directory: packages/js/examples/react-audio-widgets
         run: npm run cypress:ci:chrome
