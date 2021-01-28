@@ -37,16 +37,6 @@ jobs:
       run: npm test
       env:
         CI: true
-    - name: Install React Storybook
-      working-directory: packages/js/examples/react-audio-widgets
-      run: npm ci
-      env:
-        CI: true
-    - name: Link React Storybook with SDK
-      working-directory: packages/js/examples/react-audio-widgets
-      run: npm run setup
-      env:
-        CI: true
 
   cypress-run-chrome:
     runs-on: ubuntu-16.04
@@ -69,6 +59,11 @@ jobs:
     - name: Install package dependencies
       working-directory: packages/js/examples/react-audio-widgets
       run: npm ci --ignore-scripts
+    - name: Link React Storybook with SDK
+      working-directory: packages/js/examples/react-audio-widgets
+      run: npm run setup
+      env:
+        CI: true
     - name: Run Storybook
       working-directory: packages/js/examples/react-audio-widgets
       run: npm run storybook &
@@ -94,7 +89,6 @@ jobs:
         STORYBOOK_PASSWORD: ${{ secrets.NPM_CI_STORYBOOK_PASSWORD }}
         STORYBOOK_DESTINATION: ${{ secrets.NPM_CI_STORYBOOK_DESTINATION }} 
         
-  
   build:
     name: Build SDK
     runs-on: ubuntu-latest
