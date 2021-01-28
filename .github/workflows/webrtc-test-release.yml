@@ -64,6 +64,7 @@ jobs:
         with:
           node-version: '11.x'
       - name: Install shared dependencies
+        working-directory: packages/js/examples/react-audio-widgets
         run: npm ci
       - name: Install package dependencies
         working-directory: packages/js/examples/react-audio-widgets
