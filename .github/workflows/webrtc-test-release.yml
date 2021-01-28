@@ -41,7 +41,7 @@ jobs:
   cypress-run-chrome:
     runs-on: ubuntu-16.04
     # let's make sure our tests pass on Chrome browser
-    name: E2E on Chrome
+    name: E2E tests on Chrome and Firefox
     steps:
     - uses: actions/checkout@v2
       with:
@@ -59,12 +59,15 @@ jobs:
     - name: Install package dependencies
       working-directory: packages/js/examples/react-audio-widgets
       run: npm ci --ignore-scripts
+    - name: Install shared dependencies
+      working-directory: packages/js
+      run: npm ci --ignore-scripts
     - name: Link React Storybook with SDK
       working-directory: packages/js/examples/react-audio-widgets
       run: npm run setup
       env:
         CI: true
-    - name: Run Storybook
+    - name: Run Storybook Audio Widgets
       working-directory: packages/js/examples/react-audio-widgets
       run: npm run storybook &
       env:
@@ -72,7 +75,7 @@ jobs:
         STORYBOOK_USERNAME: ${{ secrets.NPM_CI_STORYBOOK_USERNAME }}
         STORYBOOK_PASSWORD: ${{ secrets.NPM_CI_STORYBOOK_PASSWORD }}
         STORYBOOK_DESTINATION: ${{ secrets.NPM_CI_STORYBOOK_DESTINATION }} 
-    - name: Test Chrome
+    - name: Test on Chrome
       working-directory: packages/js/examples/react-audio-widgets
       run: npm run cypress:ci:chrome   
       env:
@@ -80,7 +83,7 @@ jobs:
         STORYBOOK_USERNAME: ${{ secrets.NPM_CI_STORYBOOK_USERNAME }}
         STORYBOOK_PASSWORD: ${{ secrets.NPM_CI_STORYBOOK_PASSWORD }}
         STORYBOOK_DESTINATION: ${{ secrets.NPM_CI_STORYBOOK_DESTINATION }} 
-    - name: Test Firefox
+    - name: Test on Firefox
       working-directory: packages/js/examples/react-audio-widgets
       run: npm run cypress:ci:firefox   
       env:
