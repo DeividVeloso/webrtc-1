@@ -53,27 +53,44 @@ jobs:
     # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
-      - name: Install Cypress
+    - uses: actions/checkout@v2
+      with:
+        # https://github.com/peter-evans/create-pull-request/issues/122
+        ref: 'main'
+        # https://github.com/release-it/release-it/issues/657#issuecomment-647848200
+        fetch-depth: 0
+    - name: Use Node.js 11.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '11.x'
+    - name: Install Dependencies
+      working-directory: packages/js/examples/react-audio-widgets
+      run: npm install -D cypress  
+    - name: Install shared dependencies
+      working-directory: packages/js/examples/react-audio-widgets
+      run: npm ci
+    - name: Install package dependencies
+      working-directory: packages/js/examples/react-audio-widgets
+      run: npm ci --ignore-scripts
+    - uses: cypress-io/github-action@v2
+    - name: Run Storybook
+      working-directory: packages/js/examples/react-audio-widgets
+      run: npm run storybook
+      env:
+        CI: true 
+    - name: Test Chrome
+      working-directory: packages/js/examples/react-audio-widgets
+      run: npm run cypress:ci:chrome
+      env:
+        CI: true    
+      with:
+        build: npm i -D cypress
+        browser: chrome
+        headless: true
+        env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
         working-directory: packages/js/examples/react-audio-widgets
-        run: npm i -D cypress
-      - name: Run Cypress
-        working-directory: packages/js/examples/react-audio-widgets
-        run: npm run storybook
-      - name: Run Cypress
-        uses: cypress-io/github-action@v2
-        with:
-          browser: chrome
-          headless: true
-          env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
-          working-directory: packages/js/examples/react-audio-widgets  
-      # - uses: actions/checkout@v1
-      # - uses: cypress-io/github-action@v2
-      #   with:
-      #     build: npm i -D cypress
-      #     browser: chrome
-      #     headless: true
-      #     env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
-      #     working-directory: packages/js/examples/react-audio-widgets      
+   
+     
 
   build:
     name: Build SDK
