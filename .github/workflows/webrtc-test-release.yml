@@ -49,7 +49,7 @@ jobs:
         CI: true
 
   cypress-run-chrome:
-    runs-on:  windows-latest
+    runs-on: ubuntu-16.04
     # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
@@ -77,14 +77,6 @@ jobs:
       run: npm run storybook &
       env:
         CI: true 
-        STORYBOOK_USERNAME: ${{ secrets.NPM_CI_STORYBOOK_USERNAME }}
-        STORYBOOK_PASSWORD: ${{ secrets.NPM_CI_STORYBOOK_PASSWORD }}
-        STORYBOOK_DESTINATION: ${{ secrets.NPM_CI_STORYBOOK_DESTINATION }} 
-    - name: Test Edge
-      working-directory: packages/js/examples/react-audio-widgets
-      run: npm run cypress:ci:edge   
-      env:
-        CI: true   
         STORYBOOK_USERNAME: ${{ secrets.NPM_CI_STORYBOOK_USERNAME }}
         STORYBOOK_PASSWORD: ${{ secrets.NPM_CI_STORYBOOK_PASSWORD }}
         STORYBOOK_DESTINATION: ${{ secrets.NPM_CI_STORYBOOK_DESTINATION }} 
