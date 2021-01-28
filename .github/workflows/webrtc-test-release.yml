@@ -48,13 +48,23 @@ jobs:
       env:
         CI: true
 
-        # do not install every dependency in this example
+  # do not install every dependency in this example
   # just install Cypress, but make sure to cache it
   install-cypress-only:
+    name: Install cypress
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout 🛎
         uses: actions/checkout@v2
+        with:
+          # https://github.com/peter-evans/create-pull-request/issues/122
+          ref: 'main'
+          # https://github.com/release-it/release-it/issues/657#issuecomment-647848200
+          fetch-depth: 0
+      - name: Use Node.js 11.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '11.x'
 
       # cache NPM modules and Cypress binary folder
       # we can use "package-lock.json" as the key file
