@@ -53,14 +53,6 @@ jobs:
     # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
-      - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v2
-        with:
-          build: npm i -D cypress
-          browser: chrome
-          headless: true
-          env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
-          working-directory: packages/js/examples/react-audio-widgets
       - name: Use Node.js 11.x
         uses: actions/setup-node@v1
         with:
@@ -79,11 +71,20 @@ jobs:
         run: npm run storybook
         env:
           CI: true   
-      - name: Test Chrome
-        working-directory: packages/js/examples/react-audio-widgets
-        run: npm run cypress:ci:chrome
-        env:
-          CI: true        
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v2
+        with:
+          # build: npm i -D cypress
+          build: npm run cypress:ci:chrome
+          browser: chrome
+          headless: true
+          env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
+          working-directory: packages/js/examples/react-audio-widgets
+      # - name: Test Chrome
+      #   working-directory: packages/js/examples/react-audio-widgets
+      #   run: npm run cypress:ci:chrome
+      #   env:
+      #     CI: true        
 
   build:
     name: Build SDK
