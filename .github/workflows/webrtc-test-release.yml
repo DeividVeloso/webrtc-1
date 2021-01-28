@@ -58,9 +58,9 @@ jobs:
     # - name: Install packages/js dependencies
     #   working-directory: packages/js
     #   run: npm ci --ignore-scripts
-    # - name: Install Cypress Dependency
-    #   working-directory: packages/js/examples/react-audio-widgets
-    #   run: npm install -D cypress  
+    - name: Install Cypress Dependency
+      working-directory: packages/js/examples/react-audio-widgets
+      run: npm install -D cypress  
     - name: Install react-audio-widgets dependencies
       working-directory: packages/js/examples/react-audio-widgets
       run: npm ci --ignore-scripts
