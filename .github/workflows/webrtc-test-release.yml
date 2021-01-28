@@ -57,9 +57,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '11.x'
-      - name: Install Dependencies
-        working-directory: packages/js/examples/react-audio-widgets
-        run: npm install -D cypress  
       - name: Install shared dependencies
         working-directory: packages/js/examples/react-audio-widgets
         run: npm ci
