@@ -74,14 +74,14 @@ jobs:
       run: npm ci --ignore-scripts
     - name: Run Storybook
       working-directory: packages/js/examples/react-audio-widgets
-      run: npm run storybook & npm run cypress:ci:chrome
+      run: npm run storybook &
       env:
         CI: true 
-    # - name: Test Chrome
-    #   working-directory: packages/js/examples/react-audio-widgets
-    #   run: npm run cypress:ci:chrome
-    #   env:
-    #     CI: true    
+    - name: Test Chrome
+      working-directory: packages/js/examples/react-audio-widgets
+      run: npm run cypress:ci:chrome
+      env:
+        CI: true    
     - uses: cypress-io/github-action@v2
       with:
         # build: npm i -D cypress
