@@ -53,14 +53,16 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '11.x'
+    - name: Install shared dependencies
+      run: npm ci
+    - name: Install package dependencies
+      working-directory: packages/js
+      run: npm ci --ignore-scripts
     - name: Install Dependencies
       working-directory: packages/js/examples/react-audio-widgets
       run: npm install -D cypress  
     - name: Install package dependencies
       working-directory: packages/js/examples/react-audio-widgets
-      run: npm ci --ignore-scripts
-    - name: Install shared dependencies
-      working-directory: packages/js
       run: npm ci --ignore-scripts
     - name: Link React Storybook with SDK
       working-directory: packages/js/examples/react-audio-widgets
