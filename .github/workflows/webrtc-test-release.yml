@@ -1,6 +1,6 @@
 name: '@telnyx/webrtc Test release'
 on:
-  push:
+  pull_request:
     paths:
     - 'packages/js/**'
 jobs:
