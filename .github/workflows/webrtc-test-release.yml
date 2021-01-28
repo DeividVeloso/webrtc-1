@@ -11,7 +11,7 @@ on:
         default: 'webrtc'
 jobs:
   unit-tests:
-    name: Test release
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -48,19 +48,43 @@ jobs:
       env:
         CI: true
 
+        # do not install every dependency in this example
+  # just install Cypress, but make sure to cache it
+  install-cypress-only:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+
+      # cache NPM modules and Cypress binary folder
+      # we can use "package-lock.json" as the key file
+      # to make sure we use the precise Cypress version
+      # (which is important when using ^ version in package.json)
+      # see https://github.com/actions/cache
+      - name: Cache NPM and Cypress 📦
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Cypress 📥
+        run: npm i cypress
+
+      - name: Cypress tests 🧪
+        uses: ./
+        with:
+          working-directory: packages/js/examples/react-audio-widgets
+          install: false
+
   cypress-run-chrome:
     runs-on: ubuntu-16.04
     # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
-      - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v2
-        with:
-          browser: chrome
-          headless: true
-          env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
       - name: Use Node.js 11.x
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v1
         with:
           node-version: '11.x'
       - name: Install shared dependencies
@@ -69,6 +93,13 @@ jobs:
       - name: Install package dependencies
         working-directory: packages/js/examples/react-audio-widgets
         run: npm ci --ignore-scripts
+      - uses: actions/checkout@v1
+      - uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          headless: true
+          env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
+      
       - name: Test Chrome
         working-directory: packages/js/examples/react-audio-widgets
         run: npm run cypress:ci:chrome
