@@ -55,6 +55,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          headless: true
+          env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
       - name: Use Node.js 11.x
         uses: actions/setup-node@v1
         with:
@@ -69,45 +73,42 @@ jobs:
         run: npm run cypress:ci:chrome
         env:
           CI: true
-        with:
-          browser: chrome
-          headless: true
-          env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
+        
 
-  cypress-run-firefox:
-    runs-on: ubuntu-latest
-    name: E2E on Firefox
-    container:
-      image: cypress/browsers:node12.16.1-chrome80-ff73
-      options: --user 1001
-    steps:
-      - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v2
-      - name: Test Firefox
-        working-directory: packages/js/examples/react-audio-widgets
-        run: npm run cypress:ci:chrome
-        env:
-          CI: true
-        with:
-          browser: firefox
-          headless: true
-          env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
+  # cypress-run-firefox:
+  #   runs-on: ubuntu-latest
+  #   name: E2E on Firefox
+  #   container:
+  #     image: cypress/browsers:node12.16.1-chrome80-ff73
+  #     options: --user 1001
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - uses: cypress-io/github-action@v2
+  #     - name: Test Firefox
+  #       working-directory: packages/js/examples/react-audio-widgets
+  #       run: npm run cypress:ci:chrome
+  #       env:
+  #         CI: true
+  #       with:
+  #         browser: firefox
+  #         headless: true
+  #         env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
 
-  cypress-run-edge:
-    runs-on: windows-latest
-    name: E2E on Edge
-    steps:
-      - uses: actions/checkout@v1
-      - uses: cypress-io/github-action@v2
-      - name: Test Edge
-        working-directory: packages/js/examples/react-audio-widgets
-        run: npm run cypress:ci:chrome
-        env:
-          CI: true
-        with:
-          browser: edge
-          headless: true
-          env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
+  # cypress-run-edge:
+  #   runs-on: windows-latest
+  #   name: E2E on Edge
+  #   steps:
+  #     - uses: actions/checkout@v1
+  #     - uses: cypress-io/github-action@v2
+  #     - name: Test Edge
+  #       working-directory: packages/js/examples/react-audio-widgets
+  #       run: npm run cypress:ci:chrome
+  #       env:
+  #         CI: true
+  #       with:
+  #         browser: edge
+  #         headless: true
+  #         env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
   build:
     name: Test release
     runs-on: ubuntu-latest
