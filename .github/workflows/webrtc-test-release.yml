@@ -3,15 +3,9 @@ on:
   pull_request:
     paths:
     - 'packages/js/**'
-  workflow_dispatch:
-    inputs:
-      package:
-        description: '@telnyx/webrtc Test'
-        required: true
-        default: 'webrtc'
 jobs:
   unit-tests:
-    name: Unit Tests
+    name: Unit Test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -48,111 +42,38 @@ jobs:
       env:
         CI: true
 
-  # do not install every dependency in this example
-  # just install Cypress, but make sure to cache it
-  install-cypress-only:
-    name: Install cypress
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout 🛎
-        uses: actions/checkout@v2
-        with:
-          # https://github.com/peter-evans/create-pull-request/issues/122
-          ref: 'main'
-          # https://github.com/release-it/release-it/issues/657#issuecomment-647848200
-          fetch-depth: 0
-      - name: Use Node.js 11.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: '11.x'
-
-      # cache NPM modules and Cypress binary folder
-      # we can use "package-lock.json" as the key file
-      # to make sure we use the precise Cypress version
-      # (which is important when using ^ version in package.json)
-      # see https://github.com/actions/cache
-      - name: Cache NPM and Cypress 📦
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/Cypress
-            node_modules
-          key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Cypress 📥
-        run: npm i cypress
-
-      - name: Cypress tests 🧪
-        uses: ./
-        with:
-          working-directory: packages/js/examples/react-audio-widgets
-          install: false
-
   cypress-run-chrome:
     runs-on: ubuntu-16.04
     # let's make sure our tests pass on Chrome browser
     name: E2E on Chrome
     steps:
-      - name: Use Node.js 11.x
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '11.x'
-      - name: Install shared dependencies
-        working-directory: packages/js/examples/react-audio-widgets
-        run: npm ci
-      - name: Install package dependencies
-        working-directory: packages/js/examples/react-audio-widgets
-        run: npm ci --ignore-scripts
       - uses: actions/checkout@v1
       - uses: cypress-io/github-action@v2
         with:
           browser: chrome
           headless: true
           env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
-      
+      - name: Use Node.js 11.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '11.x'
+      - name: Install Dependencies
+        working-directory: packages/js/examples/react-audio-widgets
+        run: npm install -D cypress  
+      - name: Install shared dependencies
+        working-directory: packages/js/examples/react-audio-widgets
+        run: npm ci
+      - name: Install package dependencies
+        working-directory: packages/js/examples/react-audio-widgets
+        run: npm ci --ignore-scripts
       - name: Test Chrome
         working-directory: packages/js/examples/react-audio-widgets
         run: npm run cypress:ci:chrome
         env:
-          CI: true
-        
+          CI: true        
 
-  # cypress-run-firefox:
-  #   runs-on: ubuntu-latest
-  #   name: E2E on Firefox
-  #   container:
-  #     image: cypress/browsers:node12.16.1-chrome80-ff73
-  #     options: --user 1001
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - uses: cypress-io/github-action@v2
-  #     - name: Test Firefox
-  #       working-directory: packages/js/examples/react-audio-widgets
-  #       run: npm run cypress:ci:chrome
-  #       env:
-  #         CI: true
-  #       with:
-  #         browser: firefox
-  #         headless: true
-  #         env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
-
-  # cypress-run-edge:
-  #   runs-on: windows-latest
-  #   name: E2E on Edge
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - uses: cypress-io/github-action@v2
-  #     - name: Test Edge
-  #       working-directory: packages/js/examples/react-audio-widgets
-  #       run: npm run cypress:ci:chrome
-  #       env:
-  #         CI: true
-  #       with:
-  #         browser: edge
-  #         headless: true
-  #         env: STORYBOOK_USERNAME=${{ secrets.NPM_CI_STORYBOOK_USERNAME }},STORYBOOK_PASSWORD=${{ secrets.NPM_CI_STORYBOOK_PASSWORD }},STORYBOOK_DESTINATION=${{ secrets.NPM_CI_STORYBOOK_DESTINATION }}
   build:
-    name: Test release
+    name: Build SDK
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -173,16 +94,3 @@ jobs:
     - name: Build
       working-directory: packages/js
       run: npm run build
-    # - name: Release dry run
-    #   working-directory: packages/js
-    #   run: |
-    #     npm run release -- \
-    #     --dry-run \
-    #     --ci \
-    #     --no-git.tag \
-    #     --github.draft \
-    #     --no-npm.publish \
-    #     --no-npm.tag
-    #   env:
-    #     NPM_TOKEN: ${{ secrets.NPM_CI_TOKEN }}
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
