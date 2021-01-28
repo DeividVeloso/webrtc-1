@@ -1,6 +1,6 @@
 name: '@telnyx/webrtc Test release'
 on:
-  push:
+  pull_request:
     paths:
     - 'packages/js/**'
   workflow_dispatch:
@@ -29,9 +29,6 @@ jobs:
     - name: Install package dependencies
       working-directory: packages/js
       run: npm ci --ignore-scripts
-    - name: Build
-      working-directory: packages/js
-      run: npm run build
     - name: Test
       working-directory: packages/js
       run: npm test
@@ -53,22 +50,12 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: '11.x'
-    # - name: Install shared dependencies
-    #   run: npm ci
-    # - name: Install packages/js dependencies
-    #   working-directory: packages/js
-    #   run: npm ci --ignore-scripts
     - name: Install Cypress Dependency
       working-directory: packages/js/examples/react-audio-widgets
       run: npm install -D cypress  
     - name: Install react-audio-widgets dependencies
       working-directory: packages/js/examples/react-audio-widgets
       run: npm ci --ignore-scripts
-    # - name: Link React Storybook with SDK
-    #   working-directory: packages/js/examples/react-audio-widgets
-    #   run: npm run setup
-    #   env:
-    #     CI: true
     - name: Run Storybook Audio Widgets
       working-directory: packages/js/examples/react-audio-widgets
       run: npm run storybook &
@@ -116,3 +103,4 @@ jobs:
     - name: Build
       working-directory: packages/js
       run: npm run build
+  
