@@ -1,8 +1,14 @@
 name: '@telnyx/webrtc Test release'
 on:
-  pull_request:
+  push:
     paths:
     - 'packages/js/**'
+  workflow_dispatch:
+    inputs:
+      package:
+        description: '@telnyx/webrtc Test'
+        required: true
+        default: 'webrtc'
 jobs:
   unit-tests:
     name: Unit Test
